@@ -1,0 +1,47 @@
+{
+  "name": "@emolysis/mcp",
+  "version": "0.1.0",
+  "description": "Starts the Emolysis MCP server (emo mcp) for MCP clients that launch servers from npm.",
+  "license": "MIT",
+  "author": "Emolysis",
+  "homepage": "https://github.com/emolysis/integrations/tree/main/packages/mcp-shim#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/emolysis/integrations.git",
+    "directory": "packages/mcp-shim"
+  },
+  "bugs": {
+    "url": "https://github.com/emolysis/integrations/issues"
+  },
+  "keywords": [
+    "emolysis",
+    "mcp",
+    "model-context-protocol",
+    "data-engineering"
+  ],
+  "type": "module",
+  "bin": {
+    "emolysis-mcp": "dist/cli.js"
+  },
+  "files": [
+    "dist",
+    "NOTICE"
+  ],
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "tsc -p tsconfig.build.json",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "vitest run",
+    "prepack": "tsc -p tsconfig.build.json"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.5",
+    "typescript": "~6.0.3",
+    "vitest": "^5.0.4"
+  },
+  "publishConfig": {
+    "access": "public"
+  }
+}

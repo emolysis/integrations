@@ -1,0 +1,96 @@
+name: Emolysis checks (preview)
+description: >-
+  Preview, not yet available: the Emolysis CLI is not released, so this action stops at
+  its first step and installs nothing. Planned: install the CLI and run `emo check` on an
+  Emolysis project.
+author: Emolysis
+branding:
+  icon: check-circle
+  color: blue
+
+# The inputs follow the interface of the emolysis-checks reusable workflow in
+# emolysis/.github (docs/specs/emolysis-checks.md there), which owns it.
+
+inputs:
+  path:
+    description: >-
+      Directory of the Emolysis project (the one holding emolysis.yml), relative to the
+      repository root.
+    required: false
+    default: "."
+  platform:
+    description: >-
+      Target platform, one of databricks, snowflake or fabric. Empty uses the platform set
+      in emolysis.yml.
+    required: false
+    default: ""
+  emolysis-version:
+    description: >-
+      Version of the emolysis CLI to install, for example 0.1.0. Empty installs the latest
+      release.
+    required: false
+    default: ""
+
+runs:
+  using: composite
+  steps:
+    # Fails before anything is installed while the CLI is unreleased.
+    - name: Preview guard
+      shell: bash
+      env:
+        # Set to "true" in the release that publishes the emolysis CLI.
+        EMOLYSIS_CHECKS_AVAILABLE: "false"
+      run: |
+        if [ "$EMOLYSIS_CHECKS_AVAILABLE" != "true" ]; then
+          echo "::error title=Emolysis checks are not available yet::The emolysis CLI has not been released. This action is a preview of the planned interface; remove it from your workflows until it is available."
+          exit 1
+        fi
+
+    - name: Validate inputs
+      shell: bash
+      env:
+        PLATFORM: ${{ inputs.platform }}
+        EMOLYSIS_VERSION: ${{ inputs.emolysis-version }}
+      run: |
+        case "$PLATFORM" in
+          "" | databricks | snowflake | fabric) ;;
+          *)
+            echo "::error::platform must be databricks, snowflake, fabric or empty, not '$PLATFORM'."
+            exit 1
+            ;;
+        esac
+        if [ -n "$EMOLYSIS_VERSION" ] && ! [[ "$EMOLYSIS_VERSION" =~ ^[0-9][0-9A-Za-z.+!-]*$ ]]; then
+          echo "::error::emolysis-version must be a version such as 0.1.0, not '$EMOLYSIS_VERSION'."
+          exit 1
+        fi
+
+    - name: Set up uv
+      uses: astral-sh/setup-uv@v6
+
+    - name: Install the emolysis CLI
+      shell: bash
+      env:
+        EMOLYSIS_VERSION: ${{ inputs.emolysis-version }}
+      run: |
+        if [ -n "$EMOLYSIS_VERSION" ]; then
+          uv tool install "emolysis==$EMOLYSIS_VERSION"
+        else
+          uv tool install emolysis
+        fi
+        uv tool dir --bin >> "$GITHUB_PATH"
+
+    - name: Show the emolysis version
+      shell: bash
+      run: emo --version
+
+    - name: Run emo check
+      shell: bash
+      working-directory: ${{ inputs.path }}
+      env:
+        PLATFORM: ${{ inputs.platform }}
+      run: |
+        if [ -n "$PLATFORM" ]; then
+          emo check --platform "$PLATFORM"
+        else
+          emo check
+        fi

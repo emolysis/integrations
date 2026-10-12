@@ -1,0 +1,67 @@
+---
+description: Use the Emolysis MCP tools for data engineering and BI work - dashboards, pipelines (ingest, incremental, CDC merge, SCD2, snapshot, backfill, late-arriving, dedupe, aggregation, reverse ETL), platform connections and migrations between Databricks, Snowflake, Fabric and DuckDB.
+globs:
+alwaysApply: false
+---
+
+# Emolysis
+
+The `emolysis` MCP server (`emo mcp`) exposes the Emolysis engine. Each engine command is one
+tool, named after the command id with the dot replaced by an underscore (`engine.doctor` is
+`engine_doctor`). Use these tools for data pipelines and dashboards instead of writing
+pipeline SQL or chart JSON by hand.
+
+## Always
+
+- Start with `engine.doctor`, then `engine.commands` (`include_schema: false`). If a command
+  you need is not listed or returns `not_implemented`, tell the user that step is not
+  available in their Emolysis version and stop before it.
+- Call `platform.status` to learn the target platform. Nothing connected means local DuckDB.
+- Ask only for values you cannot get from the request, the source schema, template defaults
+  or a tool result, and ask for all of them in one message.
+- Never ask for passwords, tokens or keys in chat; `platform.connect` runs the sign-in flow.
+- Deploy (`pipeline.deploy`) and publish (`dashboard.publish`) only after a green
+  `template.test` and an explicit yes from the user.
+- `dialect.lint` takes `sql`, `dialect` and `platform`. Pass the dialect of the target:
+  databricks → `databricks`, snowflake → `snowflake`, fabric → `spark` (lakehouse) or
+  `tsql` (warehouse), local → `duckdb`. Set `platform` to `databricks`, `snowflake` or
+  `fabric`; omit it for local DuckDB.
+
+## Pipelines
+
+Shapes: `ingest-batch`, `incremental-append`, `cdc-merge`, `scd2`, `snapshot`, `backfill`,
+`late-arriving`, `dedupe-conform`, `aggregation-gold`, `reverse-etl`.
+
+1. `template.list` with `shape` and `platform`. No template means the cell is missing; do
+   not use another platform's template.
+2. Inspect the source (`catalog.search`, or `query.run` on local data) to infer slots.
+3. `template.render` with `id` and `slots`; `invalid_params` means a slot value is missing
+   or wrong.
+4. `dialect.lint` on the rendered `text` as above (SQL entries only); fix through slot values.
+5. `template.test` with `id` runs the template's own golden cases on DuckDB. It certifies the
+   template, not the user's slot values (render and lint check those). `passed: false`:
+   the template is broken; report the failing runs and stop. `not_implemented`: the
+   template cannot be tested locally in this version; do not deploy. Never edit rendered
+   SQL by hand.
+6. `pipeline.deploy` after a green test and the user's confirmation.
+
+## Dashboards
+
+`catalog.search` → `sample.run` → `bi.bind` (confirm measures and dimensions with the user)
+→ the pipeline steps with shape `aggregation-gold` → `query.run` on the gold table →
+`chart.emit` with a `chart.v1` spec → `dashboard.publish` only if the user wants to share.
+
+## Other platforms
+
+To move SQL or a pipeline to another platform, re-render the template for the target, or use
+`dialect.transpile` with `sql`, `read` and `write` (dialects: `databricks`, `snowflake`,
+`spark` for Fabric lakehouse, `tsql` for Fabric warehouse, `duckdb`), then `dialect.lint`
+with the target dialect and platform, and `template.test` for a re-rendered template. A
+`conflict` error means an artifact targets another platform or profile version.
+
+## Errors
+
+`invalid_params`: fix the params and retry once. `not_found`: re-check names.
+`auth_required`: connect the platform first. `platform_error`: report the platform's message.
+`insufficient_credits`: the Emolysis account cannot cover this step; tell the user and stop.
+`internal`: an engine bug; report it and do not retry in a loop.

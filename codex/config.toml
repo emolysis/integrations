@@ -1,0 +1,11 @@
+# Emolysis MCP server for Codex. Add this table to ~/.codex/config.toml (all
+# projects) or to .codex/config.toml in a trusted project.
+#
+# Requires the Emolysis CLI (`emo`) on PATH. If Codex cannot find it, set
+# command to the full path of the emo executable.
+
+[mcp_servers.emolysis]
+command = "emo"
+args = ["mcp"]
+# Template tests and platform calls can take longer than the 60 second default.
+tool_timeout_sec = 300

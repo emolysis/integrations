@@ -1,0 +1,9 @@
+{
+  "mcpServers": {
+    "emolysis": {
+      "type": "stdio",
+      "command": "emo",
+      "args": ["mcp"]
+    }
+  }
+}

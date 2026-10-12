@@ -1,0 +1,18 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-marketplace.json",
+  "name": "emolysis",
+  "description": "Emolysis plugins for Claude Code: data engineering and BI skills backed by the Emolysis MCP server.",
+  "owner": {
+    "name": "Emolysis",
+    "url": "https://github.com/emolysis"
+  },
+  "plugins": [
+    {
+      "name": "emolysis",
+      "source": "./claude-code",
+      "description": "Build dashboards and platform-aware pipelines with the Emolysis engine (emo mcp).",
+      "category": "data",
+      "tags": ["data-engineering", "bi", "databricks", "snowflake", "fabric", "duckdb", "mcp"]
+    }
+  ]
+}

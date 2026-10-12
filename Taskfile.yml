@@ -1,0 +1,86 @@
+version: "3"
+
+# Definition of done: `task gate` (CI runs `task setup` then `task gate`).
+
+vars:
+  ACTIONLINT: uvx --from actionlint-py==1.7.12.25 actionlint
+
+tasks:
+  default:
+    cmds:
+      - task --list
+    silent: true
+
+  setup:
+    desc: Install dependencies from the lockfile (idempotent)
+    cmds:
+      - pnpm install --frozen-lockfile
+
+  fmt:
+    desc: Format every file in place with prettier
+    cmds:
+      - pnpm exec prettier --write .
+
+  fmt:check:
+    desc: Check formatting without changing files
+    cmds:
+      - pnpm exec prettier --check .
+
+  lint:configs:
+    desc: Parse every JSON, YAML and TOML file and every skill and rule frontmatter
+    cmds:
+      - node scripts/check-configs.mjs
+
+  lint:workflows:
+    desc: Lint GitHub Actions workflows with actionlint (needs uv)
+    cmds:
+      - "{{.ACTIONLINT}} .github/workflows/*.yml"
+
+  lint:
+    desc: Formatting check, config validity and workflow lint
+    cmds:
+      - task: fmt:check
+      - task: lint:configs
+      - task: lint:workflows
+
+  typecheck:
+    desc: Type-check the shim and the repository tests with tsc
+    cmds:
+      - pnpm run typecheck
+
+  test:
+    desc: Run the vitest suites (shim, manifests and configs)
+    cmds:
+      - pnpm run test
+
+  test:shim:
+    desc: Run only the shim tests (CI runs them on Windows and macOS too)
+    cmds:
+      - pnpm --filter @emolysis/mcp run test
+
+  build:
+    desc: Compile the shim to packages/mcp-shim/dist
+    cmds:
+      - pnpm run build
+
+  plugin:validate:
+    desc: Validate the marketplace and plugin with `claude plugin validate --strict` (skipped locally without the claude CLI, fails in CI)
+    cmds:
+      - |
+        if command -v claude >/dev/null 2>&1; then
+          claude plugin validate --strict . && claude plugin validate --strict ./claude-code
+        elif [ -n "${CI:-}" ]; then
+          echo "claude CLI not found; CI must run plugin validation (ci.yml installs it)." >&2
+          exit 1
+        else
+          echo "claude CLI not found; skipped plugin validation (the manifest tests still ran)."
+        fi
+
+  gate:
+    desc: Everything CI checks; non-mutating (lint, typecheck, test, build, plugin validation)
+    cmds:
+      - task: lint
+      - task: typecheck
+      - task: test
+      - task: build
+      - task: plugin:validate

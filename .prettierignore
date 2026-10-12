@@ -1,0 +1,14 @@
+node_modules/
+dist/
+coverage/
+pnpm-lock.yaml
+log/*
+!log/devlog.md
+plan/
+
+# Shared org files, kept byte-identical to the copies in every Emolysis repository.
+.github/labels.yml
+.github/workflows/claude.yml
+.github/workflows/claude-review.yml
+.github/workflows/labels.yml
+.claude/settings.json

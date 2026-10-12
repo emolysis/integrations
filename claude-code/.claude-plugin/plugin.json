@@ -1,0 +1,24 @@
+{
+  "$schema": "https://json.schemastore.org/claude-code-plugin-manifest.json",
+  "name": "emolysis",
+  "displayName": "Emolysis",
+  "version": "0.1.0",
+  "description": "Dashboards and platform-aware data pipelines from Claude Code, through the Emolysis MCP server (emo mcp). Requires the Emolysis CLI.",
+  "author": {
+    "name": "Emolysis"
+  },
+  "homepage": "https://github.com/emolysis/integrations",
+  "repository": "https://github.com/emolysis/integrations",
+  "license": "MIT",
+  "keywords": [
+    "data-engineering",
+    "bi",
+    "dashboards",
+    "pipelines",
+    "databricks",
+    "snowflake",
+    "fabric",
+    "duckdb",
+    "mcp"
+  ]
+}
