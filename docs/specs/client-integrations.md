@@ -99,7 +99,9 @@ be checked against the engine's spec when it lands.
 7. Errors are handled by code: `invalid_params` fix and retry once; `not_found` re-check
    names; `not_implemented` report the step as unavailable; `auth_required` connect;
    `conflict` migrate; `platform_error` report; `insufficient_credits` tell the user the
-   account cannot cover the step and stop; `internal` report, no retry loop.
+   account cannot cover the step and stop; `rate_limited` wait the seconds the error gives
+   (`retry_after_seconds` in its details) and retry once, and with no wait given or a
+   second refusal tell the user and stop; `internal` report, no retry loop.
 8. Each skill ends with a short report of what it did and what it skipped.
 
 ## Skills

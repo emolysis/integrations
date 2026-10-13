@@ -78,8 +78,10 @@ or the template defaults. Ask for all missing slots in one message.
 `template.list` or names with `catalog.search`. `auth_required`: run the connect skill.
 `conflict`: the artifact targets another platform or profile version; use the migrate
 skill. `platform_error`: report the platform's message. `insufficient_credits`: the
-Emolysis account cannot cover this step; tell the user and stop. `internal`: an engine bug;
-report it and do not retry in a loop.
+Emolysis account cannot cover this step; tell the user and stop. `rate_limited`: too many
+calls in a short time; wait the seconds the error gives (`retry_after_seconds` in its
+details), then retry once; with no wait given, or refused again, tell the user and stop.
+`internal`: an engine bug; report it and do not retry in a loop.
 
 ## Report
 

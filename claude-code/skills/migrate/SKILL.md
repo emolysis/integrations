@@ -56,8 +56,10 @@ Dialects: `databricks` → `databricks`, `snowflake` → `snowflake`, Fabric lak
 `invalid_params`: unknown dialect or SQL the transpiler cannot parse; report the statement.
 `conflict`: profile version outside the template's constraint; say which version is
 installed. `not_found`: re-check ids with `template.list`. `insufficient_credits`: the
-Emolysis account cannot cover this step; tell the user and stop. `internal`: an engine bug;
-report it and do not retry in a loop.
+Emolysis account cannot cover this step; tell the user and stop. `rate_limited`: too many
+calls in a short time; wait the seconds the error gives (`retry_after_seconds` in its
+details), then retry once; with no wait given, or refused again, tell the user and stop.
+`internal`: an engine bug; report it and do not retry in a loop.
 
 ## Report
 

@@ -2,6 +2,12 @@
 
 Newest entry first. Format: `standards/devlog.md` in emolysis/rules (private).
 
+## 2026-10-13 · skills: `rate_limited` joins the shared error codes (green)
+
+- Landed: `rate_limited`, the ninth shared error code, wherever the codes are listed or handled: the dashboard, pipeline, connect and migrate skills and the Cursor rule (wait the seconds the error gives in `retry_after_seconds`, retry once; with no wait given or a second refusal, tell the user and stop), rule 7 in `docs/specs/client-integrations.md`, the code list in `docs/architecture.md`. New `tests/error-codes.test.ts`: the architecture list is the shared set, the spec rule handles every code, each Errors section handles only shared codes and always `insufficient_credits`, `rate_limited` and `internal`, and the `rate_limited` guidance retries once after the wait, then stops.
+- Numbers: 112 tests pass, 1 Windows-only skipped (repository 79, +12; shim 33); 28 config files parse; `task gate` 13 s; `claude plugin validate --strict` passes.
+- Still open: the explain skill has no Errors section (read-only); the CLI is not released, so the guidance is untested against a real `emo mcp`; see `ROADMAP.md` Gaps.
+
 ## 2026-10-12 · action: preview guard, skill params matched to the engine (green)
 
 - Landed: `github-action/action.yml` fails at its first step, "Preview guard" (`EMOLYSIS_CHECKS_AVAILABLE: "false"`), before validating inputs or installing anything; inputs `path`, `platform` (`databricks`, `snowflake`, `fabric` or empty; `duckdb` dropped) and `emolysis-version` (exact version) and their validation follow `docs/specs/emolysis-checks.md` in emolysis/.github; `tests/action.test.ts` runs the step scripts with bash.

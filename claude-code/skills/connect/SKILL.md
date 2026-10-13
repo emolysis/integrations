@@ -50,7 +50,10 @@ Ask only for what is missing, in one message.
 `invalid_params`: unknown platform id; use one of the three. `auth_required`: the user must
 finish sign-in first. `platform_error`: report the platform's message (permissions are the
 usual cause). `insufficient_credits`: the Emolysis account cannot cover this step; tell the
-user and stop. `internal`: an engine bug; report it and do not retry in a loop.
+user and stop. `rate_limited`: too many calls in a short time; wait the seconds the error
+gives (`retry_after_seconds` in its details), then retry once; with no wait given, or refused
+again, tell the user and stop. `internal`: an engine bug; report it and do not retry in a
+loop.
 
 ## Report
 

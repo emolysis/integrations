@@ -72,7 +72,10 @@ Every tool returns a typed error code. `invalid_params`: fix the params and retr
 the connect skill. `conflict`: the artifact targets another platform or profile version;
 use the migrate skill. `platform_error`: report the platform's message.
 `insufficient_credits`: the Emolysis account cannot cover this step; tell the user and
-stop. `internal`: an engine bug; report it with the details and do not retry in a loop.
+stop. `rate_limited`: too many calls in a short time; wait the seconds the error gives
+(`retry_after_seconds` in its details), then retry once; with no wait given, or refused
+again, tell the user and stop. `internal`: an engine bug; report it with the details and do
+not retry in a loop.
 
 ## Report
 
