@@ -2,6 +2,14 @@
 
 Newest entry first. Format: `standards/devlog.md` in emolysis/rules (private).
 
+## 2026-10-18 · docs: the new positioning (green)
+
+- Landed: `README.md` and `AGENTS.md` open with the positioning: "An entire data team. One
+  download.", the agentic lakehouse for data engineering and analytics, a team of agents
+  you direct from your laptop. Unreleased things stay in the future tense; status unchanged.
+- Numbers: docs only.
+- Still open: plugin, marketplace and shim descriptions take the new words when they are next published.
+
 ## 2026-10-13 · skills: `rate_limited` joins the shared error codes (green)
 
 - Landed: `rate_limited`, the ninth shared error code, wherever the codes are listed or handled: the dashboard, pipeline, connect and migrate skills and the Cursor rule (wait the seconds the error gives in `retry_after_seconds`, retry once; with no wait given or a second refusal, tell the user and stop), rule 7 in `docs/specs/client-integrations.md`, the code list in `docs/architecture.md`. New `tests/error-codes.test.ts`: the architecture list is the shared set, the spec rule handles every code, each Errors section handles only shared codes and always `insufficient_credits`, `rate_limited` and `internal`, and the `rate_limited` guidance retries once after the wait, then stops.
