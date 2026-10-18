@@ -52,6 +52,10 @@ model provider the user chooses.
   `docs/specs/client-integrations.md`).
 - The shim never throws to the user: it exits with emo's status, 127 when emo is missing
   (one stderr line), 126 when emo cannot be executed.
+- Architecture review: a change to the command ids the skills use, the MCP server
+  definition or the shim's exit codes goes through the architecture review in
+  emolysis/rules (private) before code, if you have access; the pull request then says
+  `Architecture: go (<date>)` or `Architecture: pending`.
 - Every change ships with tests.
 - Public/private boundary: this repository is public. Nothing about internal architecture,
   private repositories' contents, customers or third-party origins. Link only to
