@@ -5,6 +5,21 @@ Cursor and Codex configs, the `@emolysis/mcp` npm shim and a preview GitHub Acti
 them are thin wrappers around the `emo mcp` server that ships with the Emolysis CLI. No
 engine code lives here, and nothing here may depend on how the engine is built.
 
+## What we are building
+
+**An entire data team. One download.** Emolysis is the agentic lakehouse for data
+engineering and analytics. Direct a team of agents from your laptop to investigate
+business questions, develop dashboards, and build and test pipelines for your data
+platform. The person directs the work and reviews the results; production pipelines run on
+the user's own data platform. Nothing is released yet.
+
+This repository connects coding clients to it: every integration here is a thin layer over
+`emo mcp`, the server the agents' work runs through. Public text here uses these words.
+Describe what Emolysis does in the present tense; availability is a status line ("in
+private development", "not yet available"), never a future-tense promise. Never claim that
+no setup is needed, that it works offline or that all data stays on the machine: prompts
+go to the model provider the user chooses.
+
 ## Read first
 
 1. This file.
@@ -38,6 +53,10 @@ engine code lives here, and nothing here may depend on how the engine is built.
   `docs/specs/client-integrations.md`).
 - The shim never throws to the user: it exits with emo's status, 127 when emo is missing
   (one stderr line), 126 when emo cannot be executed.
+- Architecture review: a change to the command ids the skills use, the MCP server
+  definition or the shim's exit codes goes through the architecture review in
+  emolysis/rules (private) before code, if you have access; the pull request then says
+  `Architecture: go (<date>)` or `Architecture: pending`.
 - Every change ships with tests.
 - Public/private boundary: this repository is public. Nothing about internal architecture,
   private repositories' contents, customers or third-party origins. Link only to

@@ -1,9 +1,13 @@
 # Emolysis integrations
 
-Client integrations for [Emolysis](https://github.com/emolysis), a local-first agent for
-data engineering and BI on Databricks, Snowflake and Microsoft Fabric. Everything here is
-a thin layer over one MCP server, `emo mcp`, which ships with the Emolysis CLI (`emo`).
-This repository contains no engine code.
+**An entire data team. One download.** [Emolysis](https://github.com/emolysis) is the
+agentic lakehouse for data engineering and analytics. Direct a team of agents from your
+laptop to investigate business questions, develop dashboards, and build and test pipelines
+for your data platform.
+
+This repository holds its client integrations. Everything here is a thin layer over one
+MCP server, `emo mcp`, which ships with the Emolysis CLI (`emo`). This repository
+contains no engine code.
 
 ## Status
 
