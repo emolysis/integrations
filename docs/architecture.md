@@ -23,8 +23,9 @@ contain or depend on engine code.
 - Tools return a result or a typed error. Error codes: `invalid_params`, `not_found`,
   `not_implemented`, `auth_required`, `platform_error`, `conflict`, `internal`,
   `insufficient_credits`, `rate_limited`.
-- Without an account the server works against local files with DuckDB. Platform
-  commands return `auth_required` until the user signs in.
+- Every command that reads or writes data needs an Emolysis sign-in (`emo login`), local
+  files included; until then it returns `auth_required`. `engine.version`, `engine.doctor`
+  and `engine.commands` work without one, so a client can tell the state and say what to do.
 
 ## Components
 

@@ -2,6 +2,15 @@
 
 Newest entry first. Format: `standards/devlog.md` in emolysis/rules (private).
 
+## 2026-10-18 · docs: an account for everything (green)
+
+- Landed: `docs/architecture.md` no longer says the server works on local files without
+  an account. Every data command needs `emo login` (founder decision D20, 2026-10-18);
+  only `engine.version`, `engine.doctor` and `engine.commands` work without one. The
+  skills already stop cleanly on `auth_required`, so nothing else changes.
+- Numbers: docs only.
+- Still open: none.
+
 ## 2026-10-18 · docs: architecture review in AGENTS.md (green)
 
 - Landed: one ground rule in `AGENTS.md`: a contract change is checked with the architect
