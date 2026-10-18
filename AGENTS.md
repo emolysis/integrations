@@ -8,16 +8,17 @@ engine code lives here, and nothing here may depend on how the engine is built.
 ## What we are building
 
 **An entire data team. One download.** Emolysis is the agentic lakehouse for data
-engineering and analytics. We're building a team of agents you can direct from your
-laptop: to investigate business questions, develop dashboards, and build and test
-pipelines for your data platform. The person directs the work and reviews the results;
-production pipelines run on the user's own data platform. Nothing is released yet.
+engineering and analytics: a team of agents you direct from your laptop to investigate
+business questions, develop dashboards, and build and test pipelines for your data
+platform. The person directs the work and reviews the results; production pipelines run on
+the user's own data platform. Nothing is released yet.
 
 This repository connects coding clients to it: every integration here is a thin layer over
 `emo mcp`, the server the agents' work runs through. Public text here uses these words.
-Say "we're building" or "will" for anything not released, and never claim that no setup is
-needed, that it works offline or that all data stays on the machine: prompts go to the
-model provider the user chooses.
+Describe what Emolysis does in the present tense; availability is a status line ("in
+private development", "not yet available"), never a future-tense promise. Never claim that
+no setup is needed, that it works offline or that all data stays on the machine: prompts
+go to the model provider the user chooses.
 
 ## Read first
 
