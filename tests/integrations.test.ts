@@ -44,6 +44,7 @@ const KNOWN_COMMANDS = new Set([
   "bi.bind",
   "chart.emit",
   "dashboard.publish",
+  "dashboard.revoke",
   "project.init",
 ]);
 /** Dotted tokens in backticks that are not command ids: the chart.v1 spec and its fields. */

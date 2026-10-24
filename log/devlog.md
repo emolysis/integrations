@@ -2,6 +2,12 @@
 
 Newest entry first. Format: `standards/devlog.md` in emolysis/rules (private).
 
+## 2026-10-24 · skills: the dashboard skill publishes and revokes by the engine's params (green)
+
+- Landed: `docs/specs/client-integrations.md` lists the params of `dashboard.publish` and the new `dashboard.revoke`, and says how a skill reads their answers: a link keeps its audience (`visibility_fixed`), a replaced link (`link_replaced`), revoke by name (`revoked: false`, `not_published`). The dashboard skill's publish step does a dry run and passes the confirmed review's digest, leaves `visibility` out unless the user names an audience, and revokes only on an explicit yes. `dashboard.revoke` joins the command list and `KNOWN_COMMANDS`.
+- Numbers: 112 tests pass, 1 Windows-only skipped (repository 79, shim 33); `claude plugin validate --strict` passes.
+- Still open: the other planned ids' params.
+
 ## 2026-10-23 · ci: a draft pull request runs its checks when it is marked ready (green)
 
 - Landed: `ci.yml` lists `ready_for_review` in its `pull_request` types; its jobs skip drafts, and the default types never fire when a draft is marked ready, so a draft ran nothing until its next push.

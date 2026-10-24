@@ -42,6 +42,7 @@ when it is missing.
 | `pipeline.deploy`   | dashboard, pipeline, migrate          |
 | `chart.emit`        | dashboard                             |
 | `dashboard.publish` | dashboard                             |
+| `dashboard.revoke`  | dashboard                             |
 | `project.init`      | (none yet)                            |
 
 `tests/integrations.test.ts` keeps this list (`KNOWN_COMMANDS`) and fails on any other
@@ -52,16 +53,18 @@ dotted id in backticks in a skill or the Cursor rule. Add an id here and there t
 Skills name params exactly as the engine's command spec defines them. For the commands the
 engine implements today:
 
-| Id                  | Params                                                                                        |
-| ------------------- | --------------------------------------------------------------------------------------------- |
-| `engine.doctor`     | none                                                                                          |
-| `engine.commands`   | `include_schema` (skills pass `false`)                                                        |
-| `query.run`         | `sql`; optional `database` (existing DuckDB file), `read_only`, `max_rows`                    |
-| `dialect.transpile` | `sql`, `read` (default `duckdb`), `write`; optional `pretty`                                  |
-| `dialect.lint`      | `sql`, `dialect` (default `duckdb`), `platform` (`databricks`/`snowflake`/`fabric` or absent) |
-| `template.list`     | optional `shape`, `platform`                                                                  |
-| `template.render`   | `id` or `path`; `slots`; optional `profile_version`                                           |
-| `template.test`     | `id` or `path`; optional `case`                                                               |
+| Id                  | Params                                                                                                                                                                                                                                                                                                                                                                                                                                   |
+| ------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `engine.doctor`     | none                                                                                                                                                                                                                                                                                                                                                                                                                                     |
+| `engine.commands`   | `include_schema` (skills pass `false`)                                                                                                                                                                                                                                                                                                                                                                                                   |
+| `query.run`         | `sql`; optional `database` (existing DuckDB file), `read_only`, `max_rows`                                                                                                                                                                                                                                                                                                                                                               |
+| `dialect.transpile` | `sql`, `read` (default `duckdb`), `write`; optional `pretty`                                                                                                                                                                                                                                                                                                                                                                             |
+| `dialect.lint`      | `sql`, `dialect` (default `duckdb`), `platform` (`databricks`/`snowflake`/`fabric` or absent)                                                                                                                                                                                                                                                                                                                                            |
+| `template.list`     | optional `shape`, `platform`                                                                                                                                                                                                                                                                                                                                                                                                             |
+| `template.render`   | `id` or `path`; `slots`; optional `profile_version`                                                                                                                                                                                                                                                                                                                                                                                      |
+| `template.test`     | `id` or `path`; optional `case`                                                                                                                                                                                                                                                                                                                                                                                                          |
+| `dashboard.publish` | `project`; `dashboard` (a name in `dashboards/`) or `title`, `datasets` and `charts`; optional `visibility` (`link`/`org`/`private`; absent: `org` for a new link, the link's own for a dashboard published before), `dry_run`, `confirm_review` (the digest of the review the user confirmed), `description`, `dataset_format`, `max_rows`, `runner` (`app`/`ci`/`platform_job`, with `dashboard`), `expires_at` (not with `dashboard`) |
+| `dashboard.revoke`  | `id` (the share id from its link), or `project` and `dashboard` (revokes that dashboard's link and marks it unpublished, so its next publish makes a new link); never both                                                                                                                                                                                                                                                               |
 
 `dialect.lint` parses `sql` in `dialect` and adds `platform`'s rules. Skills always pass
 `dialect` for the target (databricks → `databricks`, snowflake → `snowflake`, fabric →
@@ -70,8 +73,16 @@ only for the three platforms: leaving `dialect` out parses platform SQL as DuckD
 `platform: duckdb` is rejected. Only SQL is linted; when the render result's `language`
 is `python` the skill skips the lint step.
 
+A dashboard's link keeps its audience for its life. Skills leave `visibility` out unless the
+user names an audience: a value other than the link's is refused with `invalid_params` and
+`details.reason` `visibility_fixed` (`details.visibility` names who can open it), and the way
+to change it is `dashboard.revoke` by name, then `dashboard.publish`, which makes a new link.
+A publish that replaced a link gone elsewhere carries the warning `link_replaced` with
+`old_id`. Revoke by name answers `revoked: false` for a link already gone, and
+`invalid_params` with `not_published` for a dashboard that has no link.
+
 The remaining ids in the command list (`platform.*`, `catalog.*`, `sample.run`, `bi.bind`,
-`pipeline.deploy`, `chart.emit`, `dashboard.publish`, `project.init`) are planned in the
+`pipeline.deploy`, `chart.emit`, `project.init`) are planned in the
 engine. Their params are not specified yet; skills describe what to pass in words and must
 be checked against the engine's spec when it lands.
 
@@ -93,8 +104,8 @@ be checked against the engine's spec when it lands.
    failing runs and stop; changing slot values cannot fix it. `not_implemented` (no local
    golden runs for that platform in the installed version) means the template is untested
    here: stop before deploying. Rendered SQL is never edited by hand.
-5. Side effects need consent: `pipeline.deploy` and `dashboard.publish` run only after a
-   green test and an explicit yes.
+5. Side effects need consent: `pipeline.deploy`, `dashboard.publish` and `dashboard.revoke`
+   run only after a green test and an explicit yes.
 6. Credentials never pass through chat or files; `platform.connect` runs the sign-in flow.
 7. Errors are handled by code: `invalid_params` fix and retry once; `not_found` re-check
    names; `not_implemented` report the step as unavailable; `auth_required` connect;
@@ -106,13 +117,13 @@ be checked against the engine's spec when it lands.
 
 ## Skills
 
-| Skill     | Arguments                               | Tool order                                                                                                                                                                                                                                  |
-| --------- | --------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| dashboard | `"<business question>"`                 | doctor, commands, `platform.status`, `catalog.search`, `sample.run`, `bi.bind`, `template.list` (aggregation-gold), `template.render`, `dialect.lint`, `template.test`, `pipeline.deploy`_, `query.run`, `chart.emit`, `dashboard.publish`_ |
-| pipeline  | `<shape> from <source> to <target>`     | doctor, commands, `platform.status`, `template.list`, `catalog.search` or `query.run`, `template.render`, `dialect.lint`, `template.test`, `pipeline.deploy`*                                                                               |
-| connect   | `<databricks\|snowflake\|fabric>`       | doctor, commands, `platform.status`, `platform.connect`, `platform.status`, `catalog.mirror`*                                                                                                                                               |
-| migrate   | `<table or pipeline> to <platform>`     | doctor, commands, then either `template.list`, `template.render`, `dialect.lint`, `template.test`, or `dialect.transpile`, `dialect.lint`; `query.run`; `pipeline.deploy`*                                                                  |
-| explain   | `<pipeline file, template id or table>` | doctor, commands, `template.list`, `dialect.lint`, `query.run` (EXPLAIN, local only); read-only                                                                                                                                             |
+| Skill     | Arguments                               | Tool order                                                                                                                                                                                                                                                       |
+| --------- | --------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| dashboard | `"<business question>"`                 | doctor, commands, `platform.status`, `catalog.search`, `sample.run`, `bi.bind`, `template.list` (aggregation-gold), `template.render`, `dialect.lint`, `template.test`, `pipeline.deploy`_, `query.run`, `chart.emit`, `dashboard.publish`_, `dashboard.revoke`_ |
+| pipeline  | `<shape> from <source> to <target>`     | doctor, commands, `platform.status`, `template.list`, `catalog.search` or `query.run`, `template.render`, `dialect.lint`, `template.test`, `pipeline.deploy`*                                                                                                    |
+| connect   | `<databricks\|snowflake\|fabric>`       | doctor, commands, `platform.status`, `platform.connect`, `platform.status`, `catalog.mirror`*                                                                                                                                                                    |
+| migrate   | `<table or pipeline> to <platform>`     | doctor, commands, then either `template.list`, `template.render`, `dialect.lint`, `template.test`, or `dialect.transpile`, `dialect.lint`; `query.run`; `pipeline.deploy`*                                                                                       |
+| explain   | `<pipeline file, template id or table>` | doctor, commands, `template.list`, `dialect.lint`, `query.run` (EXPLAIN, local only); read-only                                                                                                                                                                  |
 
 `*` only with the user's consent (deploy, publish) or when the user asked for it (mirror).
 
