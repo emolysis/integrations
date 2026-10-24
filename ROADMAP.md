@@ -24,7 +24,7 @@ Codex.
 1. End-to-end check of the plugin, Cursor and Codex against a pre-release `emo mcp` as
    soon as one exists: install, `engine.doctor`, `template.list`, one pipeline skill run.
 2. Check the skill steps for the planned commands (`platform.*`, `catalog.*`,
-   `sample.run`, `bi.bind`, `pipeline.deploy`, `chart.emit`, `dashboard.publish`) against
+   `sample.run`, `bi.bind`, `pipeline.deploy`, `chart.emit`) against
    their params once the engine specifies them.
 3. Publish `@emolysis/mcp` to npm once `emo` installs from PyPI.
 

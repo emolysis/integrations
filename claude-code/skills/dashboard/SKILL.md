@@ -62,12 +62,25 @@ Ask for all missing slots in one message.
 13. `chart.emit` with a `chart.v1` spec: `type`, `dataset.source` (the gold table),
     `dataset.fields`, `encodings.x`, `encodings.y` (with `aggregate` where needed),
     optional `encodings.series` and `formatting`.
-14. `dashboard.publish` only if the user said yes to publishing. It needs sign-in; an
+14. `dashboard.publish` only if the user said yes to publishing. Pass `project` and
+    `dashboard` (or `title`, `datasets` and `charts` for a one-off share), and leave
+    `visibility` out unless the user names an audience. Call it with `dry_run: true` first,
+    show what would leave the machine from its `review`, and publish only after the user
+    confirms, passing that review's digest as `confirm_review`. It needs sign-in; an
     `auth_required` error means the user must sign in first.
+    - A dashboard's link keeps its audience. An `invalid_params` error whose details give
+      the reason `visibility_fixed` also name who can open the link (its `visibility`):
+      say so, and that changing it means revoking the link and publishing again, which
+      gives a new link.
+    - A `link_replaced` warning means the old link was gone; give the user the new link.
+15. `dashboard.revoke` with `project` and `dashboard` only when the user asks to take a
+    dashboard's link down or to change who can open it, and only after an explicit yes: the
+    old link stops working for everyone. `revoked: false` means the link was already gone.
 
 ## Errors
 
-Every tool returns a typed error code. `invalid_params`: fix the params and retry once.
+Every tool returns a typed error code. `invalid_params`: fix the params and retry once,
+except `visibility_fixed`, which is reported, never retried (step 14).
 `not_found`: re-check names with `catalog.search` or `template.list`. `auth_required`: run
 the connect skill. `conflict`: the artifact targets another platform or profile version;
 use the migrate skill. `platform_error`: report the platform's message.
