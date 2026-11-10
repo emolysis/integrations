@@ -2,6 +2,12 @@
 
 Newest entry first. Format: `standards/devlog.md` in emolysis/rules (private).
 
+## 2026-11-10 · docs: the status says public beta; `emo` on the PATH is the open part (green)
+
+- Landed: `README.md`, `AGENTS.md` and `docs/development.md` say Emolysis is in public beta for macOS (D31, 2026-11-08) in place of "nothing is released" and "the CLI is not released". The app carries `emo` and `emo mcp`; the "not yet available" markers stay on `emo` on the PATH, `uv tool install emolysis`, `@emolysis/mcp` and the GitHub Action, so the test that checks every unreleased install command still holds. The README no longer says the server works without an account: an Emolysis account is required for every use, as the positioning says.
+- Numbers: three files; the gate runs unchanged.
+- Still open: the end-to-end check against a real `emo mcp` (ROADMAP current focus 1) and how `emo` reaches the PATH.
+
 ## 2026-10-24 · skills: the dashboard skill publishes and revokes by the engine's params (green)
 
 - Landed: `docs/specs/client-integrations.md` lists the params of `dashboard.publish` and the new `dashboard.revoke`, and says how a skill reads their answers: a link keeps its audience (`visibility_fixed`), a replaced link (`link_replaced`), revoke by name (`revoked: false`, `not_published`). The dashboard skill's publish step does a dry run and passes the confirmed review's digest, leaves `visibility` out unless the user names an audience, and revokes only on an explicit yes. `dashboard.revoke` joins the command list and `KNOWN_COMMANDS`.

@@ -11,12 +11,12 @@ contains no engine code.
 
 ## Status
 
-Fresh scaffold (October 2026). The configs, the Claude Code plugin and the npm shim are
-written and tested here, but **the Emolysis CLI is not publicly released yet**, so these
-integrations have nothing to talk to until it is. The skills are written against planned
-command ids and check what the installed CLI provides; expect changes once the CLI is
-released. Nothing is published to npm, PyPI or the GitHub Marketplace yet. See
-[ROADMAP.md](ROADMAP.md).
+Fresh scaffold (October 2026); Emolysis itself is in public beta for macOS. The configs,
+the Claude Code plugin and the npm shim are written and tested here. The desktop app
+carries the Emolysis CLI (`emo`) and its MCP server (`emo mcp`), but **`emo` on your `PATH`
+is not yet available**, so these integrations have nothing to start until it is. The
+skills check what the installed CLI provides; expect changes as it ships. Nothing is
+published to npm, PyPI or the GitHub Marketplace yet. See [ROADMAP.md](ROADMAP.md).
 
 ## What is here
 
@@ -34,14 +34,16 @@ released. Nothing is published to npm, PyPI or the GitHub Marketplace yet. See
 
 Every client needs the Emolysis CLI (`emo`) on `PATH`.
 
-**Not yet available:** the CLI is not released, and how it will be distributed is not
-decided yet. This repository assumes `uv tool install emolysis` for now, which may change.
+**Not yet available:** `emo` on your `PATH`. The desktop app carries the CLI, and how it
+reaches your `PATH` is not decided yet. This repository assumes `uv tool install emolysis`
+for now, which may change.
 Emolysis has not published a package under that name (nor `@emolysis/mcp` on npm): do not
 install anything under these names until this README says they are released. Until then
 the client setups below install, but their server has nothing to start.
 
-Without an Emolysis account the server works on local files with DuckDB. Connecting a
-platform or publishing a dashboard asks you to sign in.
+An Emolysis account is required for every use; the server asks you to sign in. Local
+files run on DuckDB on your machine; connecting a platform or publishing a dashboard
+needs the rights you hold there.
 
 ### Claude Code
 

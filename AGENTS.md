@@ -11,12 +11,12 @@ engine code lives here, and nothing here may depend on how the engine is built.
 engineering and analytics. Direct a team of agents from your laptop to investigate
 business questions, develop dashboards, and build and test pipelines for your data
 platform. The person directs the work and reviews the results; production pipelines run on
-the user's own data platform. Nothing is released yet.
+the user's own data platform. It is in public beta for macOS.
 
 This repository connects coding clients to it: every integration here is a thin layer over
 `emo mcp`, the server the agents' work runs through. Public text here uses these words.
-Describe what Emolysis does in the present tense; availability is a status line ("in
-private development", "not yet available"), never a future-tense promise. Never claim that
+Describe what Emolysis does in the present tense; availability is a status line ("public
+beta", "not yet available"), never a future-tense promise. Never claim that
 no setup is needed, that it works offline or that all data stays on the machine: prompts
 go to the model provider the user chooses.
 
@@ -44,7 +44,7 @@ go to the model provider the user chooses.
   rejects unknown ids. Every skill and rule checks `engine.commands` first and stops
   cleanly when a command is missing or returns `not_implemented`.
 - One MCP server definition everywhere: name `emolysis`, command `emo`, args `["mcp"]`.
-- Honest status: the CLI is not released. Do not claim anything works end to end, and mark
+- Honest status: `emo` on the `PATH` and the standalone CLI package are not yet available. Do not claim anything works end to end, and mark
   planned things as planned. Every install command for something not yet published
   (`emolysis` CLI, `@emolysis/mcp`, the GitHub Action) sits in a section that says "not yet
   available"; a test checks it. The action keeps its preview guard as its first step until
