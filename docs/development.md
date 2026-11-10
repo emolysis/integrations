@@ -68,7 +68,7 @@ arguments is enough to see the argument passing, exit codes and signal forwardin
 
 ## Releasing (planned)
 
-Nothing is released yet. The plugin is served from `main` through the marketplace; bump
+Emolysis is in public beta for macOS, and no integration here is published. The plugin is served from `main` through the marketplace; bump
 `version` in `claude-code/.claude-plugin/plugin.json` for every user-visible change.
 Publishing `@emolysis/mcp` to npm and tagging the action (`v0`) wait for the CLI release.
 
